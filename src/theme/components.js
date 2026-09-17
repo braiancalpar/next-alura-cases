@@ -51,10 +51,8 @@ function renderCSS(props, currentBreakpoint) {
 }
 
 export const Box = React.forwardRef(
-  (
-    { as, styleSheet: { focus, hover, srOnly, ...styleSheet }, ...props },
-    ref,
-  ) => {
+  ({ as, styleSheet = {}, ...props }, ref) => {
+    const { focus, hover, srOnly, ...styleSheetRest } = styleSheet;
     const Tag = as || "div";
 
     return (
@@ -158,17 +156,21 @@ export function Icon({ as, styleSheet: initialStyleSheet, ...props }) {
   );
 }
 
-export const Text = React.forwardRef(({ as, styleSheet, ...props }, ref) => {
-  const {
-    textVariant = {
-      fontSize: "inherit",
-    },
-    ...restStyleSheet
-  } = styleSheet;
-  const styleSheetUpdated = { ...textVariant, ...restStyleSheet };
-  const tag = as || "span";
-  return <Box ref={ref} as={tag} styleSheet={styleSheetUpdated} {...props} />;
-});
+export const Text = React.forwardRef(
+  ({ as, styleSheet = {}, ...props }, ref) => {
+    const {
+      textVariant = {
+        fontSize: "inherit",
+      },
+      ...restStyleSheet
+    } = styleSheet;
+
+    const styleSheetUpdated = { ...textVariant, ...restStyleSheet };
+    const tag = as || "span";
+
+    return <Box ref={ref} as={tag} styleSheet={styleSheetUpdated} {...props} />;
+  },
+);
 Text.defaultProps = {
   styleSheet: {},
 };
@@ -210,8 +212,8 @@ Input.defaultProps = {
   styleSheet: {},
 };
 
-export function Button({ as, styleSheet, ...props }) {
-  const { buttonVariant = "primary", ...restStyleSheet } = styleSheet;
+export function Button({ as, styleSheet = {}, ...props }) {
+  const { buttonVariant = "primary", ...restStyleSheet } = styleSheet ?? {};
   const tag = "button";
 
   const finalStyleSheet = {
